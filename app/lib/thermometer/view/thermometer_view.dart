@@ -16,7 +16,7 @@ class ThermometerView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(Constants.COLORS_UVA_BLUE),
+        //backgroundColor: const Color(Constants.COLORS_UVA_BLUE),
         title: const Text(Constants.APPBAR_TEXT),
       ),
       body: Padding(
@@ -41,7 +41,8 @@ class ThermometerView extends StatelessWidget {
             );
           },
           child: const Icon(Icons.navigate_next),
-          backgroundColor: const Color(Constants.COLORS_UVA_BLUE)),
+          //backgroundColor: const Color(Constants.COLORS_UVA_BLUE)
+),
     );
   }
 

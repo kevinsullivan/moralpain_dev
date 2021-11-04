@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moralpain/assets/constants.dart' as Constants;
+import 'package:moralpain/assets/colors.dart' as uvacolors;
 import 'package:expandable_text/expandable_text.dart';
 import 'package:moralpainapi/src/model/survey_section.dart';
 import 'package:moralpainapi/src/model/survey_option.dart';
@@ -104,16 +105,13 @@ class SurveyViewState extends State<SurveyView> {
         ElevatedButton(
           child: const Text(
             'OK',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
           style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.grey),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-              ))),
-
-          //ElevatedButton.styleFrom(primary: Colors.grey),
+            borderRadius: BorderRadius.circular(18.0),
+          ))),
           onPressed: () {
             Navigator.of(context).pop();
             Navigator.of(context).pop();
@@ -150,7 +148,6 @@ class SurveyViewState extends State<SurveyView> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(Constants.COLORS_UVA_BLUE),
         title: const Text(Constants.APPBAR_TEXT),
       ),
       body: Padding(
@@ -168,11 +165,11 @@ class SurveyViewState extends State<SurveyView> {
       floatingActionButton: Visibility(
         visible: _show,
         child: FloatingActionButton(
-            onPressed: () {
-              context.read<SurveyBloc>().add(SurveySubmitEvent());
-            },
-            child: Icon(Icons.send),
-            backgroundColor: const Color(Constants.COLORS_UVA_BLUE)),
+          onPressed: () {
+            context.read<SurveyBloc>().add(SurveySubmitEvent());
+          },
+          child: Icon(Icons.send),
+        ),
       ),
     );
   }
@@ -262,7 +259,6 @@ class SurveyOptionsWidgetState extends State<SurveyOptionsWidget> {
             final optionId = '${this.sectionId}_${option.id}';
             return CheckboxListTile(
               controlAffinity: ListTileControlAffinity.leading,
-              activeColor: Color(Constants.COLORS_UVA_BLUE),
               title: Text(option.description!),
               value: bloc.options.putIfAbsent(optionId, () => false),
               onChanged: (bool? value) {
@@ -278,11 +274,11 @@ class SurveyOptionsWidgetState extends State<SurveyOptionsWidget> {
 
 class UVACircularProgressIndicator extends CircularProgressIndicator {
   @override
-  Color? get backgroundColor => Color(Constants.COLORS_UVA_BLUE);
+  Color? get backgroundColor => uvacolors.UVABlue;
 
   @override
   Animation<Color?>? get valueColor =>
-      AlwaysStoppedAnimation(Color(Constants.COLORS_UVA_ORANGE));
+      AlwaysStoppedAnimation(uvacolors.UVAOrange);
 }
 
 class UVALinearProgressIndicator extends LinearProgressIndicator {
@@ -290,9 +286,6 @@ class UVALinearProgressIndicator extends LinearProgressIndicator {
   double? get minHeight => 10;
 
   @override
-  Color? get backgroundColor => Color(Constants.COLORS_UVA_BLUE);
-
-  @override
   Animation<Color?>? get valueColor =>
-      AlwaysStoppedAnimation(Color(Constants.COLORS_UVA_ORANGE));
+      AlwaysStoppedAnimation(uvacolors.UVAOrange);
 }

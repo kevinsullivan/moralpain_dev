@@ -1,6 +1,8 @@
 // The pattern for variable naming is: <FEATURE>_<STRING_ DESCRIPTOR>.
 
 // General Constants.
+import 'package:flutter/material.dart';
+
 const String APPBAR_TEXT = 'Moral Distress';
 const int COLORS_UVA_BLUE = 0xFF232D4B;
 const int COLORS_UVA_ORANGE = 0xFFE57200;
@@ -31,3 +33,5 @@ const String SURVEY_TOASTER_MESSAGE =
 const int SURVEY_TOASTER_DURATION = 3;
 const double SURVEY_TOASTER_FONT_SIZE = 15;
 const String SURVEY_QUESTIONNAIRE_PATH = 'assets/questionnaire.json';
+
+// Submitted Route Constants.

@@ -9,23 +9,17 @@ class HomeRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF232D4B),
-
-        title: const Text(Constants.APPBAR_TEXT),
-      ),
+      appBar: AppBar(title: const Text(Constants.APPBAR_TEXT)),
       body: Center(
-        child: ElevatedButton(
-            child: const Text(Constants.HOME_BUTTON_TEXT),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ThermometerRoute()),
-              );
-            },
-            style: ElevatedButton.styleFrom(primary: const Color(0xFF232D4B))),
-      ),
+          child: ElevatedButton(
+        child: const Text(Constants.HOME_BUTTON_TEXT),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ThermometerRoute()),
+          );
+        },
+      )),
     );
   }
 }
