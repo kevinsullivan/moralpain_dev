@@ -16,6 +16,7 @@ jobs:
     - run: flutter test
       working-directory: ./api
     - run: flutter build apk --debug --split-per-abi
+      working-directory: ./app
     - name: Create a Release APK
       uses: ncipollo/release-action@v1
       with:
