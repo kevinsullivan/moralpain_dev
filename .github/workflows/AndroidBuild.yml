@@ -1,7 +1,4 @@
-on: 
-  push:
-    tags: 
-     -'*'
+on: push
 name: Adroid APK
 jobs:
   build:
@@ -19,7 +16,7 @@ jobs:
     - run: flutter test
       working-directory: ./api
     - run: flutter build apk --debug --split-per-abi
-      working-directory: ./app
+      working-directory: ./
     - name: Create a Release APK
       uses: ncipollo/release-action@v1
       with:
