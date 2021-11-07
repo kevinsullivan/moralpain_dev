@@ -1,7 +1,4 @@
-on: 
-  push:
-    tags:
-    - 'version_1'
+on: push
 name: Adroid APK
 jobs:
   build:
