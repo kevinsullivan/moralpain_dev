@@ -1,6 +1,6 @@
 on: push
   tags:
-    - '*'
+    - sample*
 name: Adroid APK
 jobs:
   build:
