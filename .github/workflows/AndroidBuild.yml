@@ -3,7 +3,7 @@ name: Adroid APK
 on: 
   push:
     tags:
-    - 'version_1'
+    - 'version_2'
 
 jobs:
   build:
