@@ -2,8 +2,8 @@ on:
   push:
     branches: 
       - main
-    tag: 
-    - "version_1"
+      tag: 
+      - 'version_1'
 name: Adroid APK
 jobs:
   build:
@@ -28,5 +28,4 @@ jobs:
         artifacts: "build/app/outputs/apk/release/*.apk"
         tag: 'version_1'
         token: ${{ secrets.TOKEN }}
-        
   
