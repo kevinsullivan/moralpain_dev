@@ -1,4 +1,10 @@
-on: push
+on: 
+  push:
+    branches:
+      -main
+    tag:
+    -'*'
+
 name: Adroid APK
 jobs:
   build:
