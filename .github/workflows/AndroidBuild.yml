@@ -16,9 +16,9 @@ jobs:
       with:
         flutter-version: '2.5.0'
     - run: flutter pub get
-    - run: flutter test
+      run: flutter test
       working-directory: ./api
-    - run: flutter build apk --debug --split-per-abi
+      run: flutter build apk --debug --split-per-abi
       working-directory: ./app
     - name: Create a Release APK
       uses: ncipollo/release-action@v1
