@@ -2,8 +2,8 @@ on:
   push:
     branches: 
       - main
-      tag: 
-      - "version_1"
+    tag: 
+    - "version_1"
 name: Adroid APK
 jobs:
   build:
