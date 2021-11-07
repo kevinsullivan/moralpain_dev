@@ -1,4 +1,6 @@
 on: push
+  tag:
+    - 'version_1'
 name: Adroid APK
 jobs:
   build:
