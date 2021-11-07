@@ -3,7 +3,7 @@ on:
     branches: 
       - main
     tag: 
-    - "version_2"
+    - "version_1"
 name: Adroid APK
 jobs:
   build:
@@ -25,8 +25,8 @@ jobs:
     - name: Create a Release APK
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "build/app/outputs/apk/release.apk"
-        tag: 'version_2'
+        artifacts: "build/app/outputs/apk/release/*.apk"
+        tag: 'version_1'
         token: ${{ secrets.TOKEN }}
         
   
