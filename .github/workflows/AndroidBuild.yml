@@ -1,6 +1,4 @@
 on: push
-  tags:
-    - sample*
 name: Adroid APK
 jobs:
   build:
@@ -23,6 +21,5 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: "build/app/outputs/apk/release/*.apk"
-        tag: '*'
         token: ${{ secrets.TOKEN }}
   
