@@ -15,12 +15,12 @@ jobs:
       uses: subosito/flutter-action@v1
       with:
         flutter-version: '2.5.0'
-    - run: flutter pub get
-    - run: flutter test
+      run: flutter pub get
+      run: flutter test
       working-directory: ./api
-    - run: flutter build apk --debug --split-per-abi
+      run: flutter build apk --debug --split-per-abi
       working-directory: ./app
-    - name: Create a Release APK
+      name: Create a Release APK
       uses: ncipollo/release-action@v1
       with:
         artifacts: "build/app/outputs/apk/release/*.apk"
