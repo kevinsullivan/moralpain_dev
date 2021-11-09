@@ -1,9 +1,5 @@
-on:
-  push:
-    branches: 
-      - main
-    tag: 
-    - "version_4"
+on: push
+  
 name: Adroid APK
 jobs:
   build:
@@ -26,4 +22,5 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: "build/app/outputs/apk/release/*.apk"
+        tag: 'version_5'
         token: ${{ secrets.TOKEN }}
