@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,7 +47,6 @@ class ThermometerSliderTrackShape extends SliderTrackShape {
 
     assert(overlayWidth >= 0);
     assert(trackHeight >= 0);
-    //assert(parentBox.paintBounds.height > trackHeight);
 
     final double trackLeft = offset.dx + overlayWidth / 2;
     final double trackTop =
@@ -78,14 +78,13 @@ class ThermometerSliderTrackShape extends SliderTrackShape {
       return;
     }
 
-    // Paint Constants.
-    final inactiveFillPaint = Paint()..color = inactiveFillColor;
-    final activeFillPaint = Paint()..color = activeFillColor;
-    final borderPaint = Paint()..color = borderColor;
-    final measurementLinePaint = Paint()
-      ..color = measurementLineColor
-      ..strokeWidth = 2.0;
-    var borderStyle = BorderSide(color: borderColor, width: borderThickness);
+    // Border Constants.
+    final borderStrokeWidth = 2.0;
+    final borderStyle = BorderSide(color: borderColor, width: borderThickness);
+    final baseBorderPaint = Paint()
+      ..color = borderColor
+      ..strokeWidth = borderStrokeWidth + 1
+      ..style = PaintingStyle.stroke;
 
     // This is the rectangle the slider will be placed on. Our painting must
     // extend below it for the thermometer base.
@@ -114,34 +113,22 @@ class ThermometerSliderTrackShape extends SliderTrackShape {
         thermometerBaseRadius, thermometerStemHeight / -2);
     var thermometerTickWidth =
         (trackWidth - thermometerBaseRadius * 2) / thermometerSections;
-    var thermometerTickLineScale = 2;
-
-    // Thermometer base and border.
-    // Note we overlap the first division for a smooth transition.
-    context.canvas.drawCircle(thermometerBaseCenter,
-        thermometerBaseRadius + borderThickness, borderPaint);
 
     context.canvas.drawCircle(
-        thermometerBaseCenter, thermometerBaseRadius, fillPaintForSection(0));
+        thermometerBaseCenter, thermometerBaseRadius, baseBorderPaint);
 
-    var firstSection = Rect.fromLTWH(
-      thermometerBaseCenter.dx,
-      thermometerBaseCenter.dy - (thermometerStemHeight / 2),
-      thermometerBaseRadius,
-      thermometerStemHeight,
-    );
-    context.canvas.drawRect(firstSection, fillPaintForSection(0));
-
-    // All sections.
-    for (var secIndex = 0; secIndex < thermometerSections; secIndex++) {
+    // All sections. Start at -1 to overlap the base and the stem for a seamless transition.
+    for (var secIndex = -1; secIndex < thermometerSections; secIndex++) {
       var sectionOriginX =
           thermometerStemOrigin.dx + (secIndex * thermometerTickWidth);
       var sectionOriginY = thermometerStemOrigin.dy;
 
       // The section and its border.
       var section = Rect.fromLTWH(sectionOriginX, sectionOriginY,
-          thermometerTickWidth, thermometerStemHeight);
-      context.canvas.drawRect(section, fillPaintForSection(secIndex));
+          thermometerTickWidth + borderStrokeWidth, thermometerStemHeight);
+      // Pull up negative values so the base matches the first section.
+      var colorIndex = max(0, secIndex);
+      context.canvas.drawRect(section, fillPaintForSection(colorIndex));
 
       paintBorder(context.canvas, section,
           top: borderStyle, bottom: borderStyle);
@@ -156,6 +143,10 @@ class ThermometerSliderTrackShape extends SliderTrackShape {
     var section = Rect.fromLTWH(sectionOriginX, sectionOriginY,
         thermometerTickWidth, thermometerStemHeight);
     paintBorder(context.canvas, section, left: borderStyle);
+
+    // Fill in the base last to coverup the overlapping section's border.
+    context.canvas.drawCircle(
+        thermometerBaseCenter, thermometerBaseRadius, fillPaintForSection(0));
   }
 
   /**

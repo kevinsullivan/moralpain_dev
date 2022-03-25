@@ -6,7 +6,7 @@
       "Action": [
         "s3:Put*"
       ],
-      "Resource": "arn:aws:s3:::moralpain-submissions/*"
+      "Resource": "arn:aws:s3:::moralpain-submissions/surveys/*"
     }
   ]
 }

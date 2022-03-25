@@ -21,6 +21,15 @@ void main() {
       "id": "foo"
     }
   ''';
+  final visitedResiliencyResourcesExample = '''
+    {
+      "timestamp": 0, 
+      "selections": [
+        "a",
+        "b"
+      ]
+    }
+  ''';
   dioInterceptor.onGet('/survey', (server) => server.reply(200, jsonDecode('''
     {
       "version": "0.0.1",
@@ -41,6 +50,27 @@ void main() {
     ''')));
   dioInterceptor.onPost('/survey', (server) => server.reply(200, ""),
       data: jsonDecode(submissionExample));
+  dioInterceptor.onGet(
+      '/resiliency', (server) => server.reply(200, jsonDecode('''
+      {
+        "version": "0.0.1", 
+        "resources": [
+          { 
+            "resourceId": "42",
+            "title": "cats",
+            "description": "",
+            "url": "",
+            "icon": { 
+              "codePoint": "",
+              "fontFamily": "",
+              "fontPackage": "" 
+            } 
+          } 
+        ]
+      }
+    ''')));
+  dioInterceptor.onPost('/resiliency', (server) => server.reply(200, ""),
+      data: jsonDecode(visitedResiliencyResourcesExample));
 
   group(DefaultApi, () {
     // Fetch moral distress survey
@@ -59,6 +89,21 @@ void main() {
       Submission submission = standardSerializers.fromJson(
           Submission.serializer, submissionExample)!;
       final resp = await defaultApi.submitSurvey(submission: submission);
+      expect(200, resp.statusCode);
+    });
+
+    test('test getResiliencyResources', () async {
+      final resources = (await defaultApi.getResiliencyResources()).data!;
+      expect("0.0.1", resources.version);
+      expect(1, resources.resources!.length);
+    });
+
+    test('test submitSurvey', () async {
+      VisitedResiliencyResources visitedResiliencyResources =
+          standardSerializers.fromJson(VisitedResiliencyResources.serializer,
+              visitedResiliencyResourcesExample)!;
+      final resp = await defaultApi.submitVisitedResiliencyResources(
+          visitedResiliencyResources: visitedResiliencyResources);
       expect(200, resp.statusCode);
     });
   });

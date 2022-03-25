@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moralpain/survey_repository.dart';
+import 'package:moralpain/api_repository.dart';
 
 import '../survey.dart';
 import 'survey_view.dart';
@@ -10,7 +10,7 @@ import 'survey_view.dart';
 /// [CounterCubit] instance to the [CounterView].
 /// {@endtemplate}
 class SurveyRoute extends StatelessWidget {
-  final SurveyRepository repository;
+  final ApiRepository repository;
   final int score;
 
   const SurveyRoute({Key? key, required this.repository, required this.score});

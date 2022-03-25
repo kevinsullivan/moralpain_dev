@@ -7,10 +7,20 @@ part of 'serializers.dart';
 // **************************************************************************
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(Icon.serializer)
+      ..add(ResiliencyResource.serializer)
+      ..add(ResiliencyResources.serializer)
       ..add(Submission.serializer)
       ..add(Survey.serializer)
       ..add(SurveyOption.serializer)
       ..add(SurveySection.serializer)
+      ..add(VisitedResiliencyResources.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(ResiliencyResource)]),
+          () => new ListBuilder<ResiliencyResource>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => new ListBuilder<String>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
           () => new ListBuilder<String>())

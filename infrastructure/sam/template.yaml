@@ -22,8 +22,8 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       FunctionName: SubmitSurvey
-      CodeUri: SubmitSurvey
-      Handler: edu.uva.cs.moralpain.App::handleRequest
+      CodeUri: MoralPainFunctions
+      Handler: edu.uva.cs.moralpain.s3.UniqueKeyUploader::handleRequest
       Runtime: java8.al2
       Architectures:
         - x86_64
@@ -31,6 +31,7 @@ Resources:
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           bucket: moralpain-submissions
+          prefix: surveys
       Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_submit_survey_role
       Events:
         Get:
@@ -40,16 +41,42 @@ Resources:
             Method: post
             ApiId: !Ref ApiGatewayApi
 
+  SubmitVisitedResiliencyResourcesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SubmitVisitedResiliencyResources
+      CodeUri: MoralPainFunctions
+      Handler: edu.uva.cs.moralpain.s3.UniqueKeyUploader::handleRequest
+      Runtime: java8.al2
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Environment:
+        Variables:
+          bucket: moralpain-submissions
+          prefix: resiliency
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_submit_visited_resources_role
+      Events:
+        Get:
+          Type: HttpApi
+          Properties:
+            Path: /resiliency
+            Method: post
+            ApiId: !Ref ApiGatewayApi
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   SubimitSurveyFunctionAPI:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Description: "API Gateway endpoint URL for Prod stage for SubmitSurvey function"
     Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/v1/survey/"
   SubmitSurveyFunction:
-    Description: "Hello World Lambda Function ARN"
+    Description: "SubmitSurvey Lambda Function ARN"
     Value: !GetAtt SubmitSurveyFunction.Arn
-  SubmitSurveyFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt SubmitSurveyFunction.Arn
+  SubmitVisitedResiliencyResourcesFunctionAPI:
+    Description: "API Gateway endpoint URL for Prod stage for SubmitVisitedResiliencyResources function"
+    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/v1/ResiliencyResources/"
+  SubmitVisitedResiliencyResourcesFunction:
+    Description: "SubmitVisitedResiliencyResources Lambda Function ARN"
+    Value: !GetAtt SubmitVisitedResiliencyResourcesFunction.Arn

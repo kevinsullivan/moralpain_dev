@@ -143,7 +143,7 @@ Let us know what you think. Better yet, make it better and send us a PR. You'll 
 
 ## Legal and contact
 
-Copyright: © 2021 By Rectors and Visitors of the University of Virginia.
+Copyright: © 2021, 2022 By Rectors and Visitors of the University of Virginia.
 Supervising Author: Kevin Sullivan. UVa CS Dept. sullivan@virginia.edu.
 Acknowledgments: Thank you to multiple students for reading, testing, fixing.
 

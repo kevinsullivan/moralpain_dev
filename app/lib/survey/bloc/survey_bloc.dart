@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
-import 'package:moralpain/survey_repository.dart';
+import 'package:moralpain/api_repository.dart';
 import 'package:moralpainapi/moralpainapi.dart';
 import 'package:moralpainapi/src/model/survey.dart';
 import 'package:uuid/uuid.dart';
@@ -13,7 +13,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   final log = Logger('SurveyBloc');
   final uuid = Uuid();
 
-  final SurveyRepository repository;
+  final ApiRepository repository;
 
   final options = Map<String, bool>();
   final score;
@@ -43,7 +43,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     builder.timestamp = _secondsSinceEpoch();
 
     emit(SurveySubmitting());
-    final success = await repository.submit(builder.build());
+    final success = await repository.submitSurvey(builder.build());
     emit(SurveyComplete(success));
   }
 

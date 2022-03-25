@@ -3,7 +3,7 @@ Description: S3 Bucket Template.
 Parameters:
   BucketName:
     Type: String
-    Description: 'The existing S3 Bucket to create the policy for'
+    Description: Name of S3 Bucket to create
 
 Resources:
   S3Bucket:

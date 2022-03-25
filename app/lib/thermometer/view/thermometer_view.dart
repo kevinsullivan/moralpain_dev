@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:moralpain/assets/constants.dart' as Constants;
 import 'package:moralpain/survey/view/survey_route.dart';
-import 'package:moralpain/survey_repository.dart';
+import 'package:moralpain/api_repository.dart';
 import '../thermometer.dart';
 import 'themometer_slider.dart';
 
@@ -29,20 +29,20 @@ class ThermometerView extends StatelessWidget {
             }
           })),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (ctx) => SurveyRoute(
-                      repository: SurveyRepository(),
-                      // NB (nphair): Not sure if it is best practive to reach into
-                      // the bloc for the state like this.
-                      score: context.read<ThermometerCubit>().state.toInt())),
-            );
-          },
-          child: const Icon(Icons.navigate_next),
-          //backgroundColor: const Color(Constants.COLORS_UVA_BLUE)
-),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (ctx) => SurveyRoute(
+                    repository: ApiRepository(),
+                    // NB (nphair): Not sure if it is best practive to reach into
+                    // the bloc for the state like this.
+                    score: context.read<ThermometerCubit>().state.toInt())),
+          );
+        },
+        child: const Icon(Icons.navigate_next),
+        //backgroundColor: const Color(Constants.COLORS_UVA_BLUE)
+      ),
     );
   }
 

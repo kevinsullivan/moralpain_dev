@@ -2,12 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moralpain/api_repository.dart';
 import 'package:moralpain/assets/constants.dart' as Constants;
 import 'package:moralpain/assets/colors.dart' as uvacolors;
 import 'package:expandable_text/expandable_text.dart';
+import 'package:moralpain/submitted/view/submitted_route.dart';
 import 'package:moralpainapi/src/model/survey_section.dart';
 import 'package:moralpainapi/src/model/survey_option.dart';
-import 'package:moralpain/submitted/submitted_route.dart';
+import 'package:moralpain/submitted/view/submitted_view.dart';
 
 import '../survey.dart';
 
@@ -69,8 +71,13 @@ class SurveyViewState extends State<SurveyView> {
       if (!state.success) {
         showDialog(context: context, builder: failedSubmitScreenBuilder);
       } else {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const SubmittedRoute()));
+        // TODO (nphair): APIRepository should aready exist. Figure out how
+        // to access it instead of creating a new one.
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SubmittedRoute(repository: ApiRepository())));
       }
     } else {
       assert(false);
