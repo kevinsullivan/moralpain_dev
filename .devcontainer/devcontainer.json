@@ -24,7 +24,7 @@
         "Dart-Code.flutter"
     ],
     "forwardPorts": [],
-    "initializeCommand": "${localWorkspaceFolder}/bin/launch_emulator",
+    //"initializeCommand": "${localWorkspaceFolder}/bin/launch_emulator",
     "postCreateCommand": "/opt/bootstrap",
     "postStartCommand": "adb connect host.docker.internal:5555"
 }
