@@ -38,11 +38,13 @@ set_env() {
   ANDROID_SDK_ROOT=/opt/android
   PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
   PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
+  PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/platform-tools
   export ANDROID_SDK_ROOT PATH
 
   echo 'ANDROID_SDK_ROOT=/opt/android' >> ~/.bashrc
   echo 'PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin' >> ~/.bashrc
   echo 'PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin' >> ~/.bashrc
+  echo 'PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/platform-tools' >> ~/.bashrc
   echo 'PATH=$PATH:$ANDROID_SDK_ROOT/emulator' >> ~/.bashrc
   echo 'export ANDROID_SDK_ROOT PATH' >> ~/.bashrc
 }
