@@ -1,7 +1,0 @@
-# Github user for CI/CD.
-
-template_path: iam_user_consoless.template
-parameters:
-  UserName: github
-  ManagedPolicyArns:
-    - !stack_output iam/policies/cicd-s3-doucumentation-policy/policy.yaml::PolicyArn

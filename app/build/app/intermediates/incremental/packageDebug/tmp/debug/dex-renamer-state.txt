@@ -1,4 +1,0 @@
-#Wed Nov 03 13:08:54 EDT 2021
-base.0=/Users/sullivan/Projects/moralpain_dev/app/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
