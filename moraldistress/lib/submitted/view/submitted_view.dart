@@ -1,12 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/rendering.dart';
-import 'package:moraldistress/assets/constants.dart' as Constants;
+import 'package:moraldistress/assets/constants.dart' as constants;
+import 'package:moraldistress/assets/submitted_constants.dart' as submittedconstants;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moraldistress/submitted/submitted.dart';
 import 'package:moralpainapi/moralpainapi.dart' as api;
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uva_themed_widgets/src/colors.dart' as uvacolors;
 
@@ -17,7 +15,7 @@ class SubmittedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(Constants.APPBAR_TEXT),
+        title: const Text(constants.APPBAR_TEXT),
         automaticallyImplyLeading: false,
       ),
       body: Submitted(),
@@ -145,7 +143,7 @@ class _SubmittedState extends State<Submitted> {
             child: Padding(
                 padding: EdgeInsets.all(10),
                 child: Text(
-                  Constants.SUBMITTED_BODY,
+                  submittedconstants.SUBMITTED_BODY,
                   textAlign: TextAlign.left,
                   style: Theme.of(context).textTheme.bodyText1,
                 ))),
@@ -153,7 +151,7 @@ class _SubmittedState extends State<Submitted> {
           child: Padding(
               padding: EdgeInsets.all(10),
               child: Text(
-                Constants.SUBMITTED_BODY2,
+                submittedconstants.SUBMITTED_BODY2,
                 textAlign: TextAlign.left,
                 style: Theme.of(context).textTheme.bodyText1,
               )),
@@ -173,7 +171,7 @@ class _SubmittedState extends State<Submitted> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              Constants.SUBMITTED_TITLE,
+              submittedconstants.SUBMITTED_TITLE,
               style: Theme.of(context)
                   .textTheme
                   .headline5!
@@ -181,7 +179,7 @@ class _SubmittedState extends State<Submitted> {
             ),
             SizedBox(height: 10),
             Text(
-              Constants.SUBMITTED_SUBTITLE,
+              submittedconstants.SUBMITTED_SUBTITLE,
               style: Theme.of(context)
                   .textTheme
                   .bodyText1!

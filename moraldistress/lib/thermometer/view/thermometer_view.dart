@@ -1,13 +1,14 @@
-import 'package:cognito_authentication_repository/cognito_authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:uva_themed_widgets/src/colors.dart' as uvacolors;
 import 'package:moraldistress/assets/constants.dart' as constants;
+import 'package:moraldistress/assets/thermometer_constants.dart'
+    as thermometerconstants;
 import 'package:moraldistress/survey/view/survey_route.dart';
-import 'package:moraldistress/api_repository.dart';
 import '../thermometer.dart';
 import 'themometer_slider.dart';
+import '../../string_casing_extension.dart';
 
 /// {@template counter_view}
 /// A [StatelessWidget] which reacts to the provided
@@ -63,11 +64,12 @@ class ThermometerView extends StatelessWidget {
 
   Widget thermometerLandscapeText() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(constants.THERMOMETER_TITLE,
-            style: TextStyle(fontSize: constants.THERMOMETER_TITLE_FONT_SIZE)),
+        Text(thermometerconstants.THERMOMETER_TITLE,
+            style: TextStyle(
+                fontSize: thermometerconstants.THERMOMETER_TITLE_FONT_SIZE)),
         SizedBox(height: 10),
         Text(
-          constants.THERMOMETER_INSTRUCTIONS,
+          thermometerconstants.THERMOMETER_INSTRUCTIONS,
         ),
       ]);
 
@@ -75,12 +77,13 @@ class ThermometerView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(constants.THERMOMETER_TITLE,
-                style:
-                    TextStyle(fontSize: constants.THERMOMETER_TITLE_FONT_SIZE)),
+            Text(thermometerconstants.THERMOMETER_TITLE,
+                style: TextStyle(
+                    fontSize:
+                        thermometerconstants.THERMOMETER_TITLE_FONT_SIZE)),
             SizedBox(height: 10),
             Text(
-              constants.THERMOMETER_INSTRUCTIONS,
+              thermometerconstants.THERMOMETER_INSTRUCTIONS,
             ),
             SizedBox(height: 10),
             Expanded(
@@ -94,26 +97,14 @@ class ThermometerView extends StatelessWidget {
         return Center(
             child: Text(
           _scoreToText(state),
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: thermometerconstants.THERMOMETER_LABEL_FONT_SIZE),
         ));
       });
 
   String _scoreToText(score) {
-    if (score == 0) {
-      return "None";
-    } else if (score <= 3) {
-      return "Mild";
-    } else if (score <= 5) {
-      return "Distressing";
-    } else if (score <= 7) {
-      return "Uncomfortable";
-    } else if (score <= 9) {
-      return "Intense";
-    } else if (score <= 10) {
-      return "Worst Possible";
-    } else {
-      assert(false);
-      return "";
-    }
+    final rounded = score.round();
+    final label = thermometerconstants.THERMOMETER_LABELS[rounded] ?? "";
+    return label.toTitleCase();
   }
 }

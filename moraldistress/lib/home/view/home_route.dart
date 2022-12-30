@@ -1,7 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 
-import 'package:moraldistress/assets/constants.dart' as Constants;
+import 'package:moraldistress/assets/constants.dart' as constants;
+import 'package:moraldistress/assets/home_constants.dart' as homeconstants;
 import 'package:uva_themed_widgets/src/colors.dart' as uvacolors;
 import '../../auth/auth_cubit.dart';
 import '../../thermometer/thermometer.dart';
@@ -12,7 +13,7 @@ class HomeRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(Constants.APPBAR_TEXT)),
+      appBar: AppBar(title: const Text(constants.APPBAR_TEXT)),
       body: CustomPaint(
           painter: HomePainter(),
           child: Center(
@@ -25,7 +26,7 @@ class HomeRoute extends StatelessWidget {
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0)))),
-                  child: const Text(Constants.HOME_BUTTON_TEXT),
+                  child: const Text(homeconstants.HOME_BUTTON_TEXT),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -40,7 +41,7 @@ class HomeRoute extends StatelessWidget {
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0)))),
-                  child: const Text("Sign out"),
+                  child: const Text(homeconstants.SIGN_OUT_TEXT),
                   onPressed: () =>
                       BlocProvider.of<AuthCubit>(context).signOut(),
                 ),
