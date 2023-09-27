@@ -29,6 +29,6 @@
 		"ZainChen.json"
 	],
     "forwardPorts": [],
-    "postCreateCommand": "/opt/bootstrap",
+    "postCreateCommand": "${containerWorkspaceFolder}/bin/bootstrap",
     "postStartCommand": "adb connect host.docker.internal:5555"
 }
