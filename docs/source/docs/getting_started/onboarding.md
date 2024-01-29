@@ -5,6 +5,10 @@ UVa Moral Distress Reporting, Analysis, and Response project. Department of Comp
 
 ## Configure your local host machine (PC/laptop)
 
+Before starting the configuration, make sure that if you are using Windows, you are on
+Windows 11. Additionally, make sure that you use the correct capitalization and punctuation
+for every instruction in order to avoid mistakes.
+
 ### Package manager
 
 If not yet installed, install standard manager:
