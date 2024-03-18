@@ -5,6 +5,10 @@ UVa Moral Distress Reporting, Analysis, and Response project. Department of Comp
 
 ## Configure your local host machine (PC/laptop)
 
+Before starting the configuration, make sure that if you are using Windows, you are on
+Windows 11. Additionally, make sure that you use the correct capitalization and punctuation
+for every instruction in order to avoid mistakes.
+
 ### Package manager
 
 If not yet installed, install standard manager:
@@ -101,8 +105,50 @@ On Windows, the `OpenSSH` packaged with `PowerShell` may not be sufficient for f
 Get-Command ssh-agent
 ```
 
-If it falls before `8.9.1.0` then an upgrade is required. Follow the instructions [here to upgrade][24]. Step 8 may be omitted. 
+If it falls before `8.9.1.0` then an upgrade is required. Follow the instructions to upgrade below.
 
+### Upgrading OpenSSH for Windows
+First, make sure that you have Windows PowerShell opened in elevated or administrator privilege. You can do this by right-clicking on Windows PowerShell and then clicking "Run as Administrator".
+
+Next, use the command below to uninstall the package of OpenSSH that currently exists. This is specifically for OpenSSH-Client, which is what we will need as we do not need the server for this project.
+
+```
+Remove-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+You need to now to check to see if you need to restart your PC. If you see RestartNeeded : True, then you need to restart your PC. 
+
+Next, check to see if both have been uninstalled. Use the command below for this purpose:
+
+```
+Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
+```
+
+Next, use the command below which uses winget, the package installer provided by Windows, to install the most current version of OpenSSH-Client.
+
+```
+winget install Microsoft.OpenSSH.Beta --override ADDLOCAL=Client
+```
+
+If it has been installed, you should see "Successfully installed" at the bottom of the output.
+
+Next, make sure to close and restart PowerShell, still making sure to run it as administrator.
+
+You can now run the command to make sure that OpenSSH is updated. See the below command. Make sure to verify that the version is greater than or equal to 8.9.1.0.
+
+```
+Get-Command ssh-agent
+```
+
+Next, if not started already, start the service of ssh-agent with the commands below:
+
+```
+Start-Service ssh-agent
+Set-Service ssh-agent -StartupType Automatic
+Get-Service ssh-agent
+```
+
+You are now ready to proceed to the next step.
 ### SSH keys
 Create an SSH key and add it to your GitHub account by following the [official instructions][17].
 
@@ -313,4 +359,3 @@ Acknowledgments: Thank you to multiple students for reading, testing, fixing.
 [21]: https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
 [22]: https://developer.android.com/tools/variables
 [23]: https://stackoverflow.com/questions/65262340/cmdline-tools-could-not-determine-sdk-root
-[24]: https://superuser.com/questions/1726204/get-agent-identities-ssh-agent-bind-hostkey-communication-with-agent-failed
