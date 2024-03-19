@@ -1,9 +1,0 @@
-template_path: managed_policy_w_arpd_attachable_role.j2
-
-sceptre_user_data:
-  AssumeRolePolicyDocument: !file config/iam/roles/apigateway-admin-invocation-role/assume_role_policy.json
-
-parameters:
-  Name: apigateway_admin_invocation_role
-  ManagedPolicyArns:
-    - !stack_output iam/policies/apigateway-admin-invocation-policy/policy.yaml::PolicyArn

@@ -1,7 +1,0 @@
-template_path: managed_policy_attachable_role.template
-parameters:
-  Name: apigateway_submission_timestamp_get_role
-  ManagedPolicyArns:
-    - !stack_output iam/policies/apigateway-submission-timestamp-get-policy/policy.yaml::PolicyArn
-  Services:
-    - apigateway.amazonaws.com

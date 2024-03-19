@@ -1,7 +1,0 @@
-template_path: iam_managed_policy.j2
-
-sceptre_user_data:
-  PolicyDocument: !file config/iam/policies/cicd-s3-doucumentation-policy/policy.json
-
-parameters:
-  Name: cicd_s3_documentaion_write_policy

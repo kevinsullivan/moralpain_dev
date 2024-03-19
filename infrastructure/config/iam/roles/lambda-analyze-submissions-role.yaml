@@ -1,8 +1,0 @@
-template_path: managed_policy_attachable_role.template
-parameters:
-  Name: lambda_analyze_submissions_role
-  ManagedPolicyArns:
-    - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-    - !stack_output iam/policies/lambda-analyze-submissions-policy/policy.yaml::PolicyArn
-  Services:
-    - lambda.amazonaws.com

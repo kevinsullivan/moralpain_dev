@@ -1,7 +1,0 @@
-template_path: gh_aws_oidc_provider.template
-parameters:
-  GitHubOrg: kevinsullivan
-  RepositoryName: moralpain_dev
-  OIDCProviderArn: !stack_output github/oidc-provider-nicholasphair.yaml::GithubOidc
-  ManagedPolicyArns:
-    - !stack_output iam/policies/cicd-s3-doucumentation-policy/policy.yaml::PolicyArn

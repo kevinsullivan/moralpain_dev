@@ -1,8 +1,0 @@
-# APIGateway assumes this role to invoke the lambda.
-template_path: managed_policy_attachable_role.template
-parameters:
-  Name: apigateway_submission_timestamp_post_role
-  ManagedPolicyArns:
-    - !stack_output iam/policies/apigateway-submission-timestamp-post/policy.yaml::PolicyArn
-  Services:
-    - apigateway.amazonaws.com

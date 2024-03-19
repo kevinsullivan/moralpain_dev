@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-SDK_VERSION="31"
-
-adb start-server
-emulator -avd avd_$SDK_VERSION &> emulator.log &
-adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
-echo "emulator is ready..."

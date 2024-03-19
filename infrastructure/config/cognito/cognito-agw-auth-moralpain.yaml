@@ -1,6 +1,0 @@
-template_path: cognito-agw-auth.template
-parameters:
-  Name: moralpain
-  ApiUri: !stack_output_external moralpain-api::APIUri
-  AuthenticatedRoleArn: !stack_output iam/roles/apigateway-admin-invocation-role/role.yaml::RoleArn
-  UnAuthenticatedRoleArn: !stack_output iam/roles/apigateway-unauthenticated-invocation-role/role.yaml::RoleArn

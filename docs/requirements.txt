@@ -1,4 +1,0 @@
-myst-parser==0.18.0
-pygments==2.13.0
-furo==2022.06.21
-sphinxcontrib-redoc==1.6.0
