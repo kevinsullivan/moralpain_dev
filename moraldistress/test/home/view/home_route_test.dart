@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:moraldistress/assets/constants.dart' as Constants;
+import 'package:moraldistress/assets/home_constants.dart' as home_constants;
+import 'package:moraldistress/assets/constants.dart' as constants;
 import 'package:moraldistress/home/view/home_route.dart';
 import 'package:moraldistress/thermometer/view/thermometer_route.dart';
 
@@ -21,7 +22,7 @@ void main() {
         expect(appBar.title, isNotNull);
         expect(appBar.title, isA<Text>());
         Text title = appBar.title as Text;
-        expect(title.data, equals(Constants.APPBAR_TEXT));
+        expect(title.data, equals(constants.APPBAR_TEXT));
       });
 
       testWidgets('Scaffold with CustomPaint with HomePainter', (tester) async {
@@ -43,7 +44,7 @@ void main() {
         expect(button.child, isNotNull);
         expect(button.child, isA<Text>());
         Text text = button.child as Text;
-        expect(text.data, equals(Constants.HOME_BUTTON_TEXT));
+        expect(text.data, equals(home_constants.HOME_BUTTON_TEXT));
       });
     });
 

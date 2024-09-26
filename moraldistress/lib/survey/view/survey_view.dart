@@ -1,8 +1,7 @@
-import 'package:cognito_authentication_repository/cognito_authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moraldistress/api_repository.dart';
-import 'package:moraldistress/assets/constants.dart' as Constants;
+import 'package:moraldistress/assets/constants.dart' as constants;
+import 'package:moraldistress/assets/survey_constants.dart' as surveyconstants;
 import 'package:expandable_text/expandable_text.dart';
 import 'package:moraldistress/submitted/view/submitted_route.dart';
 import 'package:moralpainapi/src/model/survey_section.dart';
@@ -109,7 +108,8 @@ class SurveyViewState extends State<SurveyView> {
             Icon(Icons.signal_wifi_statusbar_connected_no_internet_4_rounded,
                 color: Colors.red, size: 40),
             SizedBox(width: 10),
-            Text("Uh-Oh!", style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(surveyconstants.SURVEY_FAILED_SUBMISSION_TITLE,
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ]),
       actions: [
         ElevatedButton(
@@ -131,14 +131,14 @@ class SurveyViewState extends State<SurveyView> {
       content: SingleChildScrollView(
           child: ListBody(
         children: const <Widget>[
-          Text('We are having a hard time submitting your report.'),
-          Text('Please check your internet connection and try again.'),
+          Text(surveyconstants.SURVEY_FAILED_SUBMISSION_TEXT),
+          Text(surveyconstants.SURVEY_FAILED_SUBMISSION_TEXT_2),
         ],
       )));
 
   Widget handleLoadEvents(BuildContext context, SurveyState state) {
     final title = Text(
-      Constants.SURVEY_TITLE,
+      surveyconstants.SURVEY_TITLE,
       style: TextStyle(fontSize: 16),
     );
 
@@ -147,9 +147,9 @@ class SurveyViewState extends State<SurveyView> {
     );
 
     final instructions = ExpandableText(
-      Constants.SURVEY_INSTRUCTIONS,
-      expandText: Constants.SURVEY_EXPAND_TEXT,
-      collapseText: Constants.SURVEY_COLLAPSE_TEXT,
+      surveyconstants.SURVEY_INSTRUCTIONS,
+      expandText: surveyconstants.SURVEY_EXPAND_TEXT,
+      collapseText: surveyconstants.SURVEY_COLLAPSE_TEXT,
       maxLines: 1,
       linkEllipsis: false,
       linkColor: Colors.blue,
@@ -157,10 +157,10 @@ class SurveyViewState extends State<SurveyView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(Constants.APPBAR_TEXT),
+        title: const Text(constants.APPBAR_TEXT),
       ),
       body: Padding(
-          padding: EdgeInsets.all(Constants.PADDING),
+          padding: EdgeInsets.all(constants.PADDING),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,7 +179,8 @@ class SurveyViewState extends State<SurveyView> {
           onPressed: () {
             var bloc = context.read<SurveyBloc>();
             print(bloc.score);
-            if (bloc.score > Constants.SURVEY_NO_SELCTIONS_REQUIRED_SCORE &&
+            if (bloc.score >
+                    surveyconstants.SURVEY_NO_SELCTIONS_REQUIRED_SCORE &&
                 !bloc.options.containsValue(true)) {
               badSubmissionToast(context);
             } else {
@@ -220,11 +221,9 @@ class SurveyViewState extends State<SurveyView> {
     scaffold.showSnackBar(
       SnackBar(
         content: const Text(
-          'For scores greater than ${Constants.SURVEY_NO_SELCTIONS_REQUIRED_SCORE} please select the contibuting factors',
+          surveyconstants.SURVEY_BAD_SUBMISSION_TEXT,
           textAlign: TextAlign.center,
         ),
-
-        //action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
       ),
     );
   }
