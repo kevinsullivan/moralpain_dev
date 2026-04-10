@@ -53,3 +53,6 @@ target
 *.g.dart
 
 docs/build
+
+# Claude Code
+.claude/
