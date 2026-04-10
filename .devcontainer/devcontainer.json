@@ -1,34 +1,67 @@
 {
     "name": "moralpain",
-    "image": "ghcr.io/kevinsullivan/moralpain_config:sha-ad23dae",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "dev",
+    "overrideCommand": false,
+    "updateRemoteUserUID": true,
     "containerEnv": {
         "WORKSPACE_FOLDER": "${containerWorkspaceFolder}"
     },
-    "settings": {},
-    "extensions": [
-		"ms-vsliveshare.vsliveshare-pack",
-		"ms-vscode-remote.remote-containers",
-		"yzhang.markdown-all-in-one",
-		"goessner.mdmath",
-		"davidanson.vscode-markdownlint",
-		"mathematic.vscode-pdf",
-		"ms-azuretools.vscode-docker",
-		"eamodio.gitlens",
-		"stephanvs.dot",
-		"ms-vscode-remote.remote-ssh",
-		"tht13.html-preview-vscode",
-		"github.codespaces",
-		"jroesch.lean",
-		"github.vscode-pull-request-github",
-		"esbenp.prettier-vscode",
-		"vscjava.vscode-java-pack",
-		"Dart-Code.flutter",
-		"vaticle.typeql",
-		"mechatroner.rainbow-csv",
-		"redhat.fabric8-analytics",
-		"ZainChen.json"
-	],
+    "remoteEnv": {
+        "PATH": "/home/dev/.local/bin:${containerEnv:PATH}"
+    },
+    "runArgs": [
+        "--memory=10gb",
+        "--init",
+        "--cap-add=SYS_PTRACE",
+        "--security-opt",
+        "seccomp=unconfined"
+    ],
     "forwardPorts": [],
     "postCreateCommand": "${containerWorkspaceFolder}/bin/bootstrap",
-    "postStartCommand": "adb connect host.docker.internal:5555"
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "python.defaultInterpreterPath": "/usr/local/bin/python3.13"
+            },
+            "extensions": [
+                "ms-vsliveshare.vsliveshare-pack",
+                "ms-vscode-remote.remote-containers",
+                "yzhang.markdown-all-in-one",
+                "goessner.mdmath",
+                "davidanson.vscode-markdownlint",
+                "mathematic.vscode-pdf",
+                "ms-azuretools.vscode-docker",
+                "eamodio.gitlens",
+                "stephanvs.dot",
+                "github.vscode-pull-request-github",
+                "esbenp.prettier-vscode",
+                "vscjava.vscode-java-pack",
+                "Dart-Code.flutter",
+                "mechatroner.rainbow-csv",
+                "ZainChen.json",
+                "42crunch.vscode-openapi",
+                "usernamehw.errorlens",
+                "alefragnani.bookmarks",
+                "streetsidesoftware.code-spell-checker",
+                "mhutchie.git-graph",
+                "donjayamanne.githistory",
+                "github.vscode-github-actions",
+                "oderwat.indent-rainbow",
+                "christian-kohler.path-intellisense",
+                "ms-python.vscode-pylance",
+                "ms-python.python",
+                "ms-python.debugpy",
+                "stkb.rewrap",
+                "gruntfuggly.todo-tree",
+                "redhat.vscode-yaml",
+                "amazonwebservices.aws-toolkit-vscode",
+                "tintinweb.graphviz-interactive-preview",
+                "Anthropic.claude-code"
+            ]
+        }
+    }
 }
