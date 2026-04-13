@@ -1,9 +1,0 @@
-template_path: managed_policy_w_arpd_attachable_role.j2
-
-sceptre_user_data:
-  AssumeRolePolicyDocument: !file config/iam/roles/apigateway-unauthenticated-invocation-role/assume_role_policy.json
-
-parameters:
-  Name: apigateway_unauthenticated_invocation_role
-  ManagedPolicyArns:
-    - !stack_output iam/policies/apigateway-unauthenticated-invocation-policy/policy.yaml::PolicyArn

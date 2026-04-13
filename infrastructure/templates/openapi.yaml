@@ -289,7 +289,7 @@ paths:
         # https://docs.aws.amazon.com/lambda/latest/dg/API_Invoke.html
         httpMethod: post
         type: aws_proxy
-        uri: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:TestFetchSubmissionField/invocations
+        uri: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:FetchSubmissionField/invocations
         credentials: arn:aws:iam::${AWS::AccountId}:role/apigateway_submission_timestamp_get_role
         passthroughBehavior: "when_no_match"
         responses:
@@ -331,7 +331,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: post
         type: aws_proxy
-        uri: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:TestSubmitSubmissionField/invocations
+        uri: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:SubmitSubmissionField/invocations
         credentials: arn:aws:iam::${AWS::AccountId}:role/apigateway_submission_timestamp_post_role
         passthroughBehavior: "when_no_match"
         responses:
