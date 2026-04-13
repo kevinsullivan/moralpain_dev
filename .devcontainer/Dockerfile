@@ -141,6 +141,9 @@ RUN ARCH=$(dpkg --print-architecture) && \
     /tmp/sam-installation/install --bin-dir /home/dev/.local/bin --install-dir /home/dev/.local/lib/aws-sam-cli && \
     rm -rf /tmp/sam-installation /tmp/samcli.zip
 
+# ----- Sceptre (user-local) -----
+RUN pip install --user --no-cache-dir sceptre
+
 # Workspace
 WORKDIR /home/dev/app
 

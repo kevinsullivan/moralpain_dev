@@ -18,23 +18,7 @@
         <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
         <s3.mock.version>2.4.10</s3.mock.version>
         <moraldistressapi.version>1.0.0</moraldistressapi.version>
-        <typedb.version>2.12.0</typedb.version>
     </properties>
-
-    <repositories>
-      <repository>
-        <id>repo.vaticle.com</id>
-        <url>https://repo.vaticle.com/repository/maven/</url>
-      </repository>
-        <repository>
-            <id>vaticle-snapsot</id>
-            <url>https://repo.vaticle.com/repository/maven-snapshot</url>
-        </repository>
-        <repository>
-            <id>nphair-snapsot</id>
-            <url>https://www.cs.virginia.edu/~np4ay/repo</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -52,11 +36,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>com.vaticle.typedb</groupId>
-                <artifactId>typedb-common</artifactId>
-                <version>2.12.0</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -66,24 +45,6 @@
             <groupId>edu.uva.cs</groupId>
             <artifactId>moraldistressapi</artifactId>
             <version>${moraldistressapi.version}</version>
-        </dependency>
-
-        <!-- typedb. -->
-        <dependency>
-          <groupId>com.vaticle.typedb</groupId>
-          <artifactId>typedb-client</artifactId>
-          <version>${typedb.version}</version>
-        </dependency>
-        <!-- Snapshot until next release with test artifacts -->
-        <dependency>
-            <groupId>com.vaticle.typedb</groupId>
-            <artifactId>typedb-runner</artifactId>
-            <version>2.12.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaticle.typedb</groupId>
-            <artifactId>typedb-common</artifactId>
         </dependency>
 
         <!-- aws sdks. -->

@@ -86,8 +86,7 @@ class ApiRepository {
     //serializers.toJson(Submission.serializer, submission)
 
     try {
-      //final res = await uapi.submitSurvey(submission: submission);
-      final res = await uapi.submitSubmissionTypeDB(submission: submission);
+      final res = await uapi.submitSurvey(submission: submission);
       return res.statusCode == 200;
     } catch (err) {
       log.shout('Error submitting survey', err);
