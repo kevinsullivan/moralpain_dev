@@ -1,0 +1,6 @@
+template_path: cognito-agw-auth.template
+parameters:
+  Name: moralpain
+  ApiUri: !stack_output app/api/api.yaml::APIUri
+  AdminInvocationPolicyArn: !stack_output app/iam/policies/apigateway-admin-invocation-policy/policy.yaml::PolicyArn
+  UnauthenticatedInvocationPolicyArn: !stack_output app/iam/policies/apigateway-unauthenticated-invocation-policy/policy.yaml::PolicyArn

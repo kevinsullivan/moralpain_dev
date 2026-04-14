@@ -1,0 +1,6 @@
+template_path: gh_aws_oidc_provider.template
+parameters:
+  GitHubOrg: nicholasphair
+  RepositoryName: moralpain_dev
+  ManagedPolicyArns:
+    - !stack_output bootstrap/iam/policies/cicd-s3-doucumentation-policy/policy.yaml::PolicyArn

@@ -1,8 +1,0 @@
-template_path: managed_policy_attachable_role.template
-parameters:
-  Name: lambda_fetch_submission_field_role
-  ManagedPolicyArns:
-    - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-    - !stack_output iam/policies/lambda-fetch-submission-field-policy/policy.yaml::PolicyArn
-  Services:
-    - lambda.amazonaws.com

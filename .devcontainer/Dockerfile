@@ -142,7 +142,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
     rm -rf /tmp/sam-installation /tmp/samcli.zip
 
 # ----- Sceptre (user-local) -----
-RUN pip install --user --no-cache-dir sceptre
+RUN pip install --user --no-cache-dir 'sceptre>=3,<4' 'networkx<3.2'
 
 # Workspace
 WORKDIR /home/dev/app
