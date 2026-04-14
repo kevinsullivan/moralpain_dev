@@ -67,7 +67,7 @@ public class SubmissionFieldFetcher implements RequestHandler<APIGatewayV2HTTPEv
         // System.out.println("before getObjectAsSubmisison");
         
         // TODO: don't deserialize JSON just to serialize it again
-        Submission submission = S3Helper.getObjectAsSubmission(client, "moralpain-submissions",
+        Submission submission = S3Helper.getObjectAsSubmission(client, "moralpain-submissions-26",
                 "single/submission.json");
         // System.out.println("after getObjectAsSubmission, submission = " + submission);
 

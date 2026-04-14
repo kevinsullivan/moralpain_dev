@@ -35,7 +35,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          bucket: moralpain-submissions
+          bucket: moralpain-submissions-26
           prefix: surveys
       Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_submit_survey_role
 
@@ -51,7 +51,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          bucket: moralpain-submissions
+          bucket: moralpain-submissions-26
           prefix: resiliency
       Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_submit_visited_resources_role
 
@@ -67,7 +67,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          bucket: moralpain-submissions
+          bucket: moralpain-submissions-26
           prefix: surveys
       Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_fetch_submissions_role
       Timeout: 60
@@ -84,7 +84,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          bucket: moralpain-submissions
+          bucket: moralpain-submissions-26
           prefix: surveys
       Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_analyze_submissions_role
 
@@ -100,7 +100,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          bucket: moralpain-submissions
+          bucket: moralpain-submissions-26
           prefix: surveys
       Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_fetch_submission_field_role
       Timeout: 60
@@ -117,7 +117,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          bucket: moralpain-submissions
+          bucket: moralpain-submissions-26
           prefix: single
           uploadFileName: submission.json
       Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_submit_submission_field_role

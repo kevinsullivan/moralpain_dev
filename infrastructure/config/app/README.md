@@ -12,7 +12,7 @@ sceptre create app
 
 | Directory | What it contains |
 |---|---|
-| [s3/](s3/) | S3 buckets: `moralpain-submissions`, `moralpain-resources`, `moralpain-site`, `moralpain-templates`, `moralpain-scratch` |
+| [s3/](s3/) | S3 buckets: `moralpain-submissions-26`, `moralpain-resources-26`, `moralpain-site-26`, `moralpain-templates-26`, `moralpain-scratch-26` |
 | [iam/policies/](iam/policies/) | Managed IAM policies attached to the Lambda and API Gateway service roles |
 | [iam/roles/](iam/roles/) | IAM roles assumed by Lambdas (per function) and by API Gateway (per integration) |
 | [api/](api/) | The SAM stack that builds and deploys the API Gateway + all Lambda functions |

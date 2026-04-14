@@ -5,20 +5,20 @@
         "Action": [
             "s3:Put*"
         ],
-        "Resource": "arn:aws:s3:::moralpain-site/admin_analytics/*"
+        "Resource": "arn:aws:s3:::moralpain-site-26/admin_analytics/*"
     },
     {
         "Effect": "Allow",
         "Action": [
             "s3:Put*"
         ],
-        "Resource": "arn:aws:s3:::moralpain-site/admin_submissions/*"
+        "Resource": "arn:aws:s3:::moralpain-site-26/admin_submissions/*"
     },
     {
         "Effect": "Allow",
         "Action": [
             "s3:Put*"
         ],
-        "Resource": "arn:aws:s3:::moralpain-site/docs/*"
+        "Resource": "arn:aws:s3:::moralpain-site-26/docs/*"
     }]
 }

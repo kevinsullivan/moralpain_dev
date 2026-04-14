@@ -4,7 +4,7 @@ info:
   description: MoralDistress API.
   version: 1.0.0
   x-logo:
-    url: "https://moralpain-site.s3.amazonaws.com/docs/assets/icon.svg"
+    url: "https://moralpain-site-26.s3.amazonaws.com/docs/assets/icon.svg"
     altText: "MoralDistress Logo"
 paths:
   /survey:
@@ -38,7 +38,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: get
         type: aws
-        uri: arn:aws:apigateway:${AWS::Region}:s3:path/moralpain-resources/questionnaire.json
+        uri: arn:aws:apigateway:${AWS::Region}:s3:path/moralpain-resources-26/questionnaire.json
         credentials: arn:aws:iam::${AWS::AccountId}:role/apigateway_s3_survey_role
         passthroughBehavior: "when_no_match"
         responses:
@@ -165,7 +165,7 @@ paths:
       x-amazon-apigateway-integration:
         httpMethod: get
         type: aws
-        uri: arn:aws:apigateway:${AWS::Region}:s3:path/moralpain-resources/resiliency_resources.json
+        uri: arn:aws:apigateway:${AWS::Region}:s3:path/moralpain-resources-26/resiliency_resources.json
         credentials: arn:aws:iam::${AWS::AccountId}:role/apigateway_s3_resiliency_resources_role
         passthroughBehavior: "when_no_match"
         responses:

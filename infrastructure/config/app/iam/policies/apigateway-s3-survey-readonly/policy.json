@@ -4,14 +4,14 @@
     {
       "Effect":"Allow",
       "Action":["s3:ListBucket","s3:GetBucketLocation"],
-      "Resource": "arn:aws:s3:::moralpain-resources"
+      "Resource": "arn:aws:s3:::moralpain-resources-26"
     },
     {
       "Effect": "Allow",
       "Action": [
         "s3:Get*"
       ],
-      "Resource": "arn:aws:s3:::moralpain-resources/questionnaire.json"
+      "Resource": "arn:aws:s3:::moralpain-resources-26/questionnaire.json"
     }
   ]
 }
