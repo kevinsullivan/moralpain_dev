@@ -29,7 +29,7 @@ Resources:
       FunctionName: !Sub ${prefix}SubmitSurvey
       CodeUri: MoralPainFunctions
       Handler: edu.uva.cs.moralpain.s3.UniqueKeyUploader::handleRequest
-      Runtime: java8.al2
+      Runtime: java11
       Architectures:
         - x86_64
       MemorySize: 512
@@ -45,7 +45,7 @@ Resources:
       FunctionName: !Sub ${prefix}SubmitVisitedResiliencyResources
       CodeUri: MoralPainFunctions
       Handler: edu.uva.cs.moralpain.s3.UniqueKeyUploader::handleRequest
-      Runtime: java8.al2
+      Runtime: java11
       Architectures:
         - x86_64
       MemorySize: 512
@@ -61,7 +61,7 @@ Resources:
       FunctionName: !Sub ${prefix}FetchSubmissions
       CodeUri: MoralPainFunctions
       Handler: edu.uva.cs.moralpain.s3.SubmissionFetcher::handleRequest
-      Runtime: java8.al2
+      Runtime: java11
       Architectures:
         - x86_64
       MemorySize: 512
@@ -78,7 +78,7 @@ Resources:
       FunctionName: !Sub ${prefix}AnalyzeSubmissions
       CodeUri: MoralPainFunctions
       Handler: edu.uva.cs.moralpain.s3.SubmissionAnalyzer::handleRequest
-      Runtime: java8.al2
+      Runtime: java11
       Architectures:
         - x86_64
       MemorySize: 512
@@ -94,7 +94,7 @@ Resources:
       FunctionName: !Sub ${prefix}FetchSubmissionField
       CodeUri: MoralPainFunctions
       Handler: edu.uva.cs.moralpain.s3.SubmissionFieldFetcher::handleRequest
-      Runtime: java8.al2
+      Runtime: java11
       Architectures:
         - x86_64
       MemorySize: 512
@@ -111,7 +111,7 @@ Resources:
       FunctionName: !Sub ${prefix}SubmitSubmissionField
       CodeUri: MoralPainFunctions
       Handler: edu.uva.cs.moralpain.s3.SubmissionUpdater::handleRequest
-      Runtime: java8.al2
+      Runtime: java11
       Architectures:
         - x86_64
       MemorySize: 512
