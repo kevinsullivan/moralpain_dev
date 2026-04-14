@@ -1,6 +1,15 @@
 template_path: cognito-agw-auth.template
+
+# !stack_output_external does not register a sceptre dependency, so declare
+# the API stack explicitly to ensure it is deployed first.
+dependencies:
+  - app/api/api.yaml
+
 parameters:
   Name: moralpain
-  ApiUri: !stack_output app/api/api.yaml::APIUri
+  # Using !stack_output_external (literal CloudFormation stack name) because
+  # !stack_output doesn't honour the `stack_name: moralpain-api` override in
+  # app/api/api.yaml — it derives the name from the config path instead.
+  ApiUri: !stack_output_external moralpain-api::APIUri
   AdminInvocationPolicyArn: !stack_output app/iam/policies/apigateway-admin-invocation-policy/policy.yaml::PolicyArn
   UnauthenticatedInvocationPolicyArn: !stack_output app/iam/policies/apigateway-unauthenticated-invocation-policy/policy.yaml::PolicyArn
