@@ -15,7 +15,5 @@ template:
 dependencies:
   - app/iam/roles/lambda-submit-survey-role.yaml
   - app/iam/roles/lambda-submit-visited-resources-role.yaml
-  - app/iam/roles/lambda-fetch-submissions-role.yaml
-  - app/iam/roles/lambda-analyze-submissions-role.yaml
   - app/iam/roles/lambda-fetch-submission-field-role.yaml
   - app/iam/roles/lambda-submit-submission-field-role.yaml

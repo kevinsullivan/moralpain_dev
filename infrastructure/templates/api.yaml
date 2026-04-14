@@ -55,39 +55,6 @@ Resources:
           prefix: resiliency
       Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_submit_visited_resources_role
 
-  FetchSubmissionsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${prefix}FetchSubmissions
-      CodeUri: MoralPainFunctions
-      Handler: edu.uva.cs.moralpain.s3.SubmissionFetcher::handleRequest
-      Runtime: java11
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      Environment:
-        Variables:
-          bucket: moralpain-submissions-26
-          prefix: surveys
-      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_fetch_submissions_role
-      Timeout: 60
-
-  AnalyzeSubmissionsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${prefix}AnalyzeSubmissions
-      CodeUri: MoralPainFunctions
-      Handler: edu.uva.cs.moralpain.s3.SubmissionAnalyzer::handleRequest
-      Runtime: java11
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      Environment:
-        Variables:
-          bucket: moralpain-submissions-26
-          prefix: surveys
-      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_analyze_submissions_role
-
   FetchSubmissionFieldFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -137,9 +104,3 @@ Outputs:
   SubmitVisitedResiliencyResourcesFunction:
     Description: "SubmitVisitedResiliencyResources Lambda Function ARN"
     Value: !GetAtt SubmitVisitedResiliencyResourcesFunction.Arn
-  FetchSubmissionsFunctionAPI:
-    Description: "API Gateway endpoint URL for Prod stage for FetchSubmissions function"
-    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/v1/admin/submissions/"
-  FetchSubmissionsFunction:
-    Description: "FetchSubmissions Lambda Function ARN"
-    Value: !GetAtt FetchSubmissionsFunction.Arn

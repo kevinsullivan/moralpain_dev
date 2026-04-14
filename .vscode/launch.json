@@ -5,20 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "aws-sam",
-            "request": "direct-invoke",
-            "name": "sam:FetchSubmissionsFunction",
-            "invokeTarget": {
-                "target": "template",
-                "templatePath": "${workspaceFolder}/infrastructure/sam/template.yaml",
-                "logicalId": "FetchSubmissionsFunction"
-            },
-            "lambda": {
-                "payload": {},
-                "environmentVariables": {}
-            }
-        },
-        {
             "name": "moralpain",
             "cwd": "moraldistress",
             "program": "lib/main.dart",
