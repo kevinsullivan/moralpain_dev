@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# deploy - Deploy the MoralPain application stacks via sceptre.
+#
+# Usage:
+#   ./deploy              # sceptre create app (fresh deploy)
+#   ./deploy --launch     # sceptre launch app (idempotent; updates or creates as needed)
+#
+# After the CloudFormation stacks are up, this also seeds the
+# moralpain-resources-26 bucket with the two static JSON files the
+# /survey (GET) and /resiliency (GET) endpoints proxy through
+# API Gateway.
+
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+SCEPTRE_CMD="create"
+for arg in "$@"; do
+    case "$arg" in
+        --launch) SCEPTRE_CMD="launch" ;;
+        -h|--help)
+            sed -n '3,13p' "$0" | sed 's/^# //; s/^#$//'
+            exit 0
+            ;;
+        *)
+            echo "Unknown argument: $arg" >&2
+            exit 2
+            ;;
+    esac
+done
+
+RESOURCES_BUCKET="moralpain-resources-26"
+RESOURCES_DIR="../resources"
+
+echo ">>> Deploying app stacks with 'sceptre $SCEPTRE_CMD app'"
+sceptre "$SCEPTRE_CMD" app
+
+echo
+echo ">>> Seeding s3://$RESOURCES_BUCKET/ with static API assets"
+aws s3 cp "$RESOURCES_DIR/questionnaire.json"       "s3://$RESOURCES_BUCKET/questionnaire.json"
+aws s3 cp "$RESOURCES_DIR/resiliency_resources.json" "s3://$RESOURCES_BUCKET/resiliency_resources.json"
+
+echo
+echo ">>> Deploy complete."

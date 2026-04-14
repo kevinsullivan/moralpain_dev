@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+#
+# delete - Tear down the MoralPain application stacks and buckets.
+#
+# Usage:
+#   ./delete
+#
+# What this does:
+#   1. Runs `sceptre delete app`, which removes every CloudFormation stack
+#      managed under infrastructure/config/app/.
+#   2. CloudFormation will NOT delete the S3 buckets, for two reasons:
+#        - The static-site bucket has DeletionPolicy: Retain on its
+#          CloudFormation resource so the delete is skipped.
+#        - Any non-empty bucket is rejected by CloudFormation regardless of
+#          its DeletionPolicy.
+#      After stack deletion this script prompts before emptying and
+#      deleting each moralpain-*-26 bucket, including the sceptre-managed
+#      template bucket that no CloudFormation stack knows about.
+#
+# This script is destructive. Every object in the listed buckets is lost.
+
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+BUCKETS=(
+    moralpain-submissions-26
+    moralpain-resources-26
+    moralpain-scratch-26
+    moralpain-site-26
+    moralpain-templates-26
+)
+
+echo ">>> Deleting app stacks with 'sceptre delete app'"
+sceptre delete app
+
+echo
+echo ">>> The following S3 buckets are NOT removed by CloudFormation:"
+for b in "${BUCKETS[@]}"; do
+    echo "      - s3://$b"
+done
+echo
+read -r -p "Empty and delete all of them? [y/N] " answer
+case "$answer" in
+    y|Y|yes|YES) ;;
+    *) echo "Skipping bucket cleanup. Done."; exit 0 ;;
+esac
+
+for b in "${BUCKETS[@]}"; do
+    if aws s3api head-bucket --bucket "$b" 2>/dev/null; then
+        echo
+        echo ">>> Emptying s3://$b/"
+        aws s3 rm "s3://$b" --recursive
+        # Also purge any object versions / delete markers if versioning was enabled
+        # (moralpain-submissions-26 has versioning on).
+        versions=$(aws s3api list-object-versions --bucket "$b" \
+            --output json --query '{Objects: Versions[].{Key:Key,VersionId:VersionId}}' 2>/dev/null || echo '{"Objects":null}')
+        if [ "$(echo "$versions" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d.get("Objects") or []))')" -gt 0 ]; then
+            echo "$versions" | aws s3api delete-objects --bucket "$b" --delete file:///dev/stdin >/dev/null
+        fi
+        markers=$(aws s3api list-object-versions --bucket "$b" \
+            --output json --query '{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}' 2>/dev/null || echo '{"Objects":null}')
+        if [ "$(echo "$markers" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d.get("Objects") or []))')" -gt 0 ]; then
+            echo "$markers" | aws s3api delete-objects --bucket "$b" --delete file:///dev/stdin >/dev/null
+        fi
+
+        echo ">>> Deleting s3://$b/"
+        aws s3api delete-bucket --bucket "$b"
+    else
+        echo ">>> Skipping s3://$b/ (does not exist)"
+    fi
+done
+
+echo
+echo ">>> Delete complete."
