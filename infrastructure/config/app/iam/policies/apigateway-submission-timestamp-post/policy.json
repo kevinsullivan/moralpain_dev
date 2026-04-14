@@ -7,7 +7,7 @@
         "lambda:InvokeFunction"
       ],
       "Resource": {
-        "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:TestSubmitSubmissionField"
+        "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:SubmitSubmissionField"
       }
     }
   ]
