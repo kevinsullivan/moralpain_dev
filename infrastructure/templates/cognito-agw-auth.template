@@ -84,6 +84,12 @@ Resources:
 
   UserPoolUICustomization:
     Type: AWS::Cognito::UserPoolUICustomizationAttachment
+    # A UI customization requires a user pool domain to exist. CloudFormation
+    # does not infer this, so on stack delete it tries to remove the
+    # customization after the domain has already gone and fails with
+    # "A domain must be associated with this user pool". Make the dependency
+    # explicit so CFN tears down the customization first.
+    DependsOn: UserPoolDomain
     Properties:
       UserPoolId: !Ref UserPool
       ClientId: !Ref UserPoolClient

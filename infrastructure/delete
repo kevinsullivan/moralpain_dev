@@ -5,70 +5,107 @@
 # Usage:
 #   ./delete
 #
-# What this does:
-#   1. Runs `sceptre delete app`, which removes every CloudFormation stack
-#      managed under infrastructure/config/app/.
-#   2. CloudFormation will NOT delete the S3 buckets, for two reasons:
-#        - The static-site bucket has DeletionPolicy: Retain on its
-#          CloudFormation resource so the delete is skipped.
-#        - Any non-empty bucket is rejected by CloudFormation regardless of
-#          its DeletionPolicy.
-#      After stack deletion this script prompts before emptying and
-#      deleting each moralpain-*-26 bucket, including the sceptre-managed
-#      template bucket that no CloudFormation stack knows about.
+# Why this is non-trivial:
+#   - CloudFormation refuses to delete non-empty S3 buckets.
+#   - The moralpain-site bucket has DeletionPolicy: Retain so CloudFormation
+#     leaves it behind entirely.
+#   - The template bucket (moralpain-templates-26) is auto-created by sceptre
+#     and not owned by any CloudFormation stack.
+#   - moralpain-submissions-26 has versioning on, so plain `s3 rm --recursive`
+#     leaves versioned objects and delete markers behind.
 #
-# This script is destructive. Every object in the listed buckets is lost.
+# So this script:
+#   1. Prompts before doing anything destructive.
+#   2. Empties every moralpain-*-26 bucket (including versioned objects and
+#      delete markers), so CloudFormation can delete the three buckets that
+#      ARE managed by stacks.
+#   3. Runs `sceptre delete app`, which deletes every CloudFormation stack
+#      managed under infrastructure/config/app/.
+#   4. Deletes the three buckets CloudFormation would not touch: the static
+#      site bucket (DeletionPolicy: Retain) and the sceptre-managed
+#      template bucket.
+#
+# Every object in the listed buckets is lost.
 
 set -euo pipefail
 
 cd "$(dirname "$0")"
 
-BUCKETS=(
+# Buckets removed by CloudFormation (their stacks delete them once empty).
+CFN_MANAGED_BUCKETS=(
     moralpain-submissions-26
     moralpain-resources-26
     moralpain-scratch-26
+)
+
+# Buckets CloudFormation won't delete (Retain, or not owned by any stack).
+# We remove these ourselves after sceptre is done.
+ORPHAN_BUCKETS=(
     moralpain-site-26
     moralpain-templates-26
 )
 
-echo ">>> Deleting app stacks with 'sceptre delete app'"
-sceptre delete app
+ALL_BUCKETS=("${CFN_MANAGED_BUCKETS[@]}" "${ORPHAN_BUCKETS[@]}")
 
+empty_bucket() {
+    local b="$1"
+    if ! aws s3api head-bucket --bucket "$b" 2>/dev/null; then
+        echo ">>> Skipping s3://$b/ (does not exist)"
+        return 0
+    fi
+
+    echo ">>> Emptying s3://$b/"
+    # Current objects.
+    aws s3 rm "s3://$b" --recursive >/dev/null
+
+    # Versioned objects and delete markers (for versioning-enabled buckets).
+    versions=$(aws s3api list-object-versions --bucket "$b" \
+        --output json --query '{Objects: Versions[].{Key:Key,VersionId:VersionId}}' 2>/dev/null || echo '{"Objects":null}')
+    if [ "$(echo "$versions" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d.get("Objects") or []))')" -gt 0 ]; then
+        echo "$versions" | aws s3api delete-objects --bucket "$b" --delete file:///dev/stdin >/dev/null
+    fi
+    markers=$(aws s3api list-object-versions --bucket "$b" \
+        --output json --query '{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}' 2>/dev/null || echo '{"Objects":null}')
+    if [ "$(echo "$markers" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d.get("Objects") or []))')" -gt 0 ]; then
+        echo "$markers" | aws s3api delete-objects --bucket "$b" --delete file:///dev/stdin >/dev/null
+    fi
+}
+
+delete_bucket() {
+    local b="$1"
+    if aws s3api head-bucket --bucket "$b" 2>/dev/null; then
+        echo ">>> Deleting s3://$b/"
+        aws s3api delete-bucket --bucket "$b"
+    fi
+}
+
+echo ">>> This will DELETE all MoralPain application stacks and empty"
+echo ">>> every moralpain-*-26 S3 bucket. Data will be lost."
 echo
-echo ">>> The following S3 buckets are NOT removed by CloudFormation:"
-for b in "${BUCKETS[@]}"; do
+for b in "${ALL_BUCKETS[@]}"; do
     echo "      - s3://$b"
 done
 echo
-read -r -p "Empty and delete all of them? [y/N] " answer
+read -r -p "Proceed? [y/N] " answer
 case "$answer" in
     y|Y|yes|YES) ;;
-    *) echo "Skipping bucket cleanup. Done."; exit 0 ;;
+    *) echo "Aborted."; exit 0 ;;
 esac
 
-for b in "${BUCKETS[@]}"; do
-    if aws s3api head-bucket --bucket "$b" 2>/dev/null; then
-        echo
-        echo ">>> Emptying s3://$b/"
-        aws s3 rm "s3://$b" --recursive
-        # Also purge any object versions / delete markers if versioning was enabled
-        # (moralpain-submissions-26 has versioning on).
-        versions=$(aws s3api list-object-versions --bucket "$b" \
-            --output json --query '{Objects: Versions[].{Key:Key,VersionId:VersionId}}' 2>/dev/null || echo '{"Objects":null}')
-        if [ "$(echo "$versions" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d.get("Objects") or []))')" -gt 0 ]; then
-            echo "$versions" | aws s3api delete-objects --bucket "$b" --delete file:///dev/stdin >/dev/null
-        fi
-        markers=$(aws s3api list-object-versions --bucket "$b" \
-            --output json --query '{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}' 2>/dev/null || echo '{"Objects":null}')
-        if [ "$(echo "$markers" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d.get("Objects") or []))')" -gt 0 ]; then
-            echo "$markers" | aws s3api delete-objects --bucket "$b" --delete file:///dev/stdin >/dev/null
-        fi
+echo
+echo "===== 1/3 Emptying buckets ====="
+for b in "${ALL_BUCKETS[@]}"; do
+    empty_bucket "$b"
+done
 
-        echo ">>> Deleting s3://$b/"
-        aws s3api delete-bucket --bucket "$b"
-    else
-        echo ">>> Skipping s3://$b/ (does not exist)"
-    fi
+echo
+echo "===== 2/3 Deleting CloudFormation stacks ====="
+sceptre delete app
+
+echo
+echo "===== 3/3 Deleting orphan buckets ====="
+for b in "${ORPHAN_BUCKETS[@]}"; do
+    delete_bucket "$b"
 done
 
 echo
