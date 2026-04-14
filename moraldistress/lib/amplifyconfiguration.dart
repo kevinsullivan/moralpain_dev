@@ -12,15 +12,15 @@ const amplifyconfig = ''' {
           "CredentialsProvider": {
             "CognitoIdentity": {
               "Default": {
-                "PoolId": "us-east-1:c028d79f-e179-4f13-89b2-e66cbd675fd8",
+                "PoolId": "us-east-1:15780a00-0b24-4d31-ae88-ac5e6df4b673",
                 "Region": "us-east-1"
               }
             }
           },
           "CognitoUserPool": {
             "Default": {
-              "PoolId": "us-east-1_pqNwySoyF",
-              "AppClientId": "7402ua1jc98ho8ach5ejfn53j1",
+              "PoolId": "us-east-1_BFXo4Rb0K",
+              "AppClientId": "5p9k3kri6rnk46lguj5ff9fhtm",
               "Region": "us-east-1"
             }
           },
@@ -28,7 +28,7 @@ const amplifyconfig = ''' {
             "Default": {
               "OAuth": {
                 "WebDomain": "moralpain-user-pool-domain.auth.us-east-1.amazoncognito.com",
-                "AppClientId": "7402ua1jc98ho8ach5ejfn53j1",
+                "AppClientId": "5p9k3kri6rnk46lguj5ff9fhtm",
                 "SignInRedirectURI": "myapp://,http://localhost:3000/,https://nicholasphair.github.io/moralpain_dev/",
                 "SignOutRedirectURI": "myapp://,http://localhost:3000/,https://nicholasphair.github.io/moralpain_dev/",
                 "Scopes": [

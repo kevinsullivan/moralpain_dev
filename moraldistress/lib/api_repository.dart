@@ -13,7 +13,7 @@ class ApiRepository {
 
   Moralpainapi mapi = Moralpainapi(
       basePathOverride:
-          'https://rorsg5xkqh.execute-api.us-east-1.amazonaws.com/v1');
+          'https://lxt0kermp2.execute-api.us-east-1.amazonaws.com/v1');
 
   ApiRepository() {
     mapi.dio.options.connectTimeout = 30 * 1000;
