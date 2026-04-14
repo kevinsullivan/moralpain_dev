@@ -11,14 +11,15 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref BucketName
-      AccessControl: PublicRead
-      OwnershipControls:
-        Rules:
-          - ObjectOwnership: ObjectWriter
+      # Public read access is granted via BucketPolicy below. We don't set
+      # AccessControl here because post-2023 AWS defaults block bucket ACLs,
+      # and the account-level BlockPublicAccess setting overrides any
+      # bucket-level config. BlockPublicPolicy must still be disabled so
+      # the public read policy can attach.
       PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
+        BlockPublicAcls: true
         BlockPublicPolicy: false
-        IgnorePublicAcls: false
+        IgnorePublicAcls: true
         RestrictPublicBuckets: false
       WebsiteConfiguration:
         IndexDocument: index.html
