@@ -1,15 +1,23 @@
 #!/usr/bin/env bash
 #
-# smoke-test - Poke each deployed API endpoint with an example request.
+# smoke-test - Exercise every deployed API endpoint end-to-end.
 #
 # Usage:
-#   ./smoke-test                                    # auto-detects the API URL, signs all
+#   ./smoke-test                                    # auto-detects the API URL
 #   ./smoke-test https://xxx.execute-api.us-east-1.amazonaws.com/v1
-#   ./smoke-test --unsigned                         # skip signing (expect 403 on every endpoint)
 #
-# All endpoints require AWS sigv4 auth. awscurl signs every request with
-# your current AWS credentials. `--unsigned` skips signing, which is useful
-# for confirming that auth is actually being enforced (expect 403s).
+# For every endpoint this script:
+#   - Sends the request UNSIGNED and asserts API Gateway rejects it
+#     with HTTP 403 (confirms sigv4 is actually being enforced).
+#   - Sends the request SIGNED with your AWS credentials (awscurl) and
+#     asserts HTTP 200.
+#
+# For the two POST endpoints it additionally:
+#   - Counts objects under the target S3 prefix before and after the
+#     signed POST and asserts the count went up by exactly one.
+#   - WARNS if you ask for object counts while other clients are likely
+#     posting to the bucket, because that would make the count check
+#     racy and unreliable.
 #
 # Requires:  pip install --user awscurl
 
@@ -17,13 +25,11 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-SIGN=1
 API_URL=""
 for arg in "$@"; do
     case "$arg" in
-        --unsigned) SIGN=0 ;;
         -h|--help)
-            sed -n '3,15p' "$0" | sed 's/^# //; s/^#$//'
+            sed -n '3,20p' "$0" | sed 's/^# //; s/^#$//'
             exit 0
             ;;
         https://*) API_URL="$arg" ;;
@@ -33,6 +39,11 @@ for arg in "$@"; do
             ;;
     esac
 done
+
+if ! command -v awscurl >/dev/null 2>&1; then
+    echo "awscurl not installed. Run: pip install --user awscurl" >&2
+    exit 1
+fi
 
 if [ -z "$API_URL" ]; then
     base=$(aws cloudformation describe-stacks --stack-name moralpain-api \
@@ -46,55 +57,118 @@ if [ -z "$API_URL" ]; then
     API_URL="$base/v1"
 fi
 
-if [ "$SIGN" = "1" ] && ! command -v awscurl >/dev/null 2>&1; then
-    echo "awscurl not installed. Run: pip install --user awscurl" >&2
-    echo "Or re-run with --unsigned to hit the API without auth." >&2
-    exit 1
-fi
+SUBMISSIONS_BUCKET="moralpain-submissions-26"
+TS=$(date +%s)
 
-request() {
+PASS=0
+FAIL=0
+
+pass() { echo "  PASS: $1"; PASS=$((PASS+1)); }
+fail() { echo "  FAIL: $1"; FAIL=$((FAIL+1)); }
+section() { echo; echo "========== $* =========="; }
+
+# Count objects under an S3 prefix.
+s3_count() {
+    aws s3api list-objects-v2 --bucket "$1" --prefix "$2" \
+        --query 'length(Contents || `[]`)' --output text 2>/dev/null
+}
+
+# Emit a race-condition warning about object counts on a shared bucket.
+race_warning() {
+    echo "  NOTE: pre/post count check assumes no other clients are"
+    echo "        writing to s3://$SUBMISSIONS_BUCKET/$1 right now."
+    echo "        If they are, this assertion is unreliable."
+}
+
+# Assert HTTP status from an unsigned curl to $API_URL$path, method $1.
+assert_unsigned_rejected() {
     local method="$1" path="$2" body="${3:-}"
-    if [ "$SIGN" = "1" ]; then
-        if [ -n "$body" ]; then
-            awscurl -X "$method" --service execute-api \
-                -H 'Content-Type: application/json' \
-                -d "$body" "$API_URL$path"
-        else
-            awscurl -X "$method" --service execute-api "$API_URL$path"
-        fi
-        echo
+    local args=(-sS -o /dev/null -w '%{http_code}' -X "$method" "$API_URL$path")
+    if [ -n "$body" ]; then
+        args=(-H 'Content-Type: application/json' -d "$body" "${args[@]}")
+    fi
+    local code
+    code=$(curl "${args[@]}")
+    if [ "$code" = "403" ]; then
+        pass "unsigned $method $path -> 403 (auth enforced)"
     else
-        if [ -n "$body" ]; then
-            curl -sS -w '\n-> HTTP %{http_code}\n' -X "$method" \
-                -H 'Content-Type: application/json' \
-                -d "$body" "$API_URL$path"
-        else
-            curl -sS -w '\n-> HTTP %{http_code}\n' -X "$method" "$API_URL$path"
-        fi
+        fail "unsigned $method $path -> $code (expected 403)"
+    fi
+}
+
+# Assert HTTP 200 from a signed (awscurl) request.
+# Prints response body. Returns 0 only on success.
+assert_signed_ok() {
+    local method="$1" path="$2" body="${3:-}"
+    local args=(-i -X "$method" --service execute-api)
+    if [ -n "$body" ]; then
+        args+=(-H 'Content-Type: application/json' -d "$body")
+    fi
+    args+=("$API_URL$path")
+    local response
+    if ! response=$(awscurl "${args[@]}" 2>&1); then
+        fail "signed $method $path -> awscurl failed"
+        echo "$response" | sed 's/^/    /'
+        return 1
+    fi
+    local code
+    code=$(echo "$response" | head -1 | awk '{print $2}')
+    if [ "$code" = "200" ]; then
+        pass "signed $method $path -> 200"
+        return 0
+    else
+        fail "signed $method $path -> $code"
+        echo "$response" | head -20 | sed 's/^/    /'
+        return 1
     fi
 }
 
 echo ">>> Using API base URL: $API_URL"
-if [ "$SIGN" = "1" ]; then
-    echo ">>> Signing all requests with sigv4 (awscurl)."
-else
-    echo ">>> Sending all requests UNSIGNED (--unsigned)."
-fi
-TS=$(date +%s)
-
-section() { echo; echo "========== $* =========="; }
+echo ">>> Submissions bucket: s3://$SUBMISSIONS_BUCKET"
 
 section "GET /survey"
-request GET /survey
-
-section "POST /survey"
-request POST /survey "{\"id\":\"smoke-test-$TS\",\"score\":42,\"selections\":[\"fearing_litigation\"],\"timestamp\":$TS}"
+assert_unsigned_rejected GET /survey
+assert_signed_ok          GET /survey
 
 section "GET /resiliency"
-request GET /resiliency
+assert_unsigned_rejected GET /resiliency
+assert_signed_ok          GET /resiliency
+
+section "POST /survey"
+SURVEY_BODY="{\"id\":\"smoke-test-$TS\",\"score\":42,\"selections\":[\"fearing_litigation\"],\"timestamp\":$TS}"
+assert_unsigned_rejected POST /survey "$SURVEY_BODY"
+race_warning "surveys/"
+before=$(s3_count "$SUBMISSIONS_BUCKET" "surveys/")
+if assert_signed_ok POST /survey "$SURVEY_BODY"; then
+    # Give S3 a beat for eventual consistency.
+    sleep 2
+    after=$(s3_count "$SUBMISSIONS_BUCKET" "surveys/")
+    if [ "$after" = "$((before + 1))" ]; then
+        pass "surveys/ object count $before -> $after (+1)"
+    else
+        fail "surveys/ object count $before -> $after (expected +1)"
+    fi
+fi
 
 section "POST /resiliency"
-request POST /resiliency "{\"selections\":[\"001\",\"002\"],\"timestamp\":$TS}"
+RES_BODY="{\"selections\":[\"001\",\"002\"],\"timestamp\":$TS}"
+assert_unsigned_rejected POST /resiliency "$RES_BODY"
+race_warning "resiliency/"
+before=$(s3_count "$SUBMISSIONS_BUCKET" "resiliency/")
+if assert_signed_ok POST /resiliency "$RES_BODY"; then
+    sleep 2
+    after=$(s3_count "$SUBMISSIONS_BUCKET" "resiliency/")
+    if [ "$after" = "$((before + 1))" ]; then
+        pass "resiliency/ object count $before -> $after (+1)"
+    else
+        fail "resiliency/ object count $before -> $after (expected +1)"
+    fi
+fi
 
 echo
-echo ">>> Smoke test complete."
+echo "========== Summary =========="
+echo "  Passed: $PASS"
+echo "  Failed: $FAIL"
+if [ "$FAIL" -gt 0 ]; then
+    exit 1
+fi
