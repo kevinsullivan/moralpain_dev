@@ -205,6 +205,8 @@ paths:
             text/plain:
               schema:
                 type: string
+      security:
+        - sigv4Reference: []
       x-amazon-apigateway-integration:
         httpMethod: post
         type: aws_proxy
