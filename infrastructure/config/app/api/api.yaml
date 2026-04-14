@@ -6,3 +6,16 @@ template:
   artifact_bucket_name: !stack_attr template_bucket_name
   build_args:
     base-dir: ../code
+
+# The SAM template references Lambda execution role ARNs as hardcoded
+# strings (e.g. arn:aws:iam::${AWS::AccountId}:role/lambda_submit_survey_role)
+# rather than via !stack_output, so sceptre cannot infer the dependency.
+# These must be declared explicitly so the roles exist before the Lambdas
+# try to assume them.
+dependencies:
+  - app/iam/roles/lambda-submit-survey-role.yaml
+  - app/iam/roles/lambda-submit-visited-resources-role.yaml
+  - app/iam/roles/lambda-fetch-submissions-role.yaml
+  - app/iam/roles/lambda-analyze-submissions-role.yaml
+  - app/iam/roles/lambda-fetch-submission-field-role.yaml
+  - app/iam/roles/lambda-submit-submission-field-role.yaml
