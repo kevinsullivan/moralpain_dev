@@ -9,17 +9,19 @@
 # For every endpoint this script:
 #   - Sends the request UNSIGNED and asserts API Gateway rejects it
 #     with HTTP 403 (confirms sigv4 is actually being enforced).
-#   - Sends the request SIGNED with your AWS credentials (awscurl) and
+#   - Sends the request SIGNED with your AWS credentials and
 #     asserts HTTP 200.
 #
 # For the two POST endpoints it additionally:
 #   - Counts objects under the target S3 prefix before and after the
 #     signed POST and asserts the count went up by exactly one.
-#   - WARNS if you ask for object counts while other clients are likely
-#     posting to the bucket, because that would make the count check
-#     racy and unreliable.
+#   - WARNS that the count check is racy if other clients are writing
+#     to the bucket concurrently.
 #
-# Requires:  pip install --user awscurl
+# Signing uses curl's native --aws-sigv4 (curl 7.75+). AWS credentials
+# are sourced from the usual locations: env vars, ~/.aws/credentials,
+# or SSO cache. If AWS_SESSION_TOKEN is set, it's passed through with
+# x-amz-security-token.
 
 set -euo pipefail
 
@@ -29,7 +31,7 @@ API_URL=""
 for arg in "$@"; do
     case "$arg" in
         -h|--help)
-            sed -n '3,20p' "$0" | sed 's/^# //; s/^#$//'
+            sed -n '3,22p' "$0" | sed 's/^# //; s/^#$//'
             exit 0
             ;;
         https://*) API_URL="$arg" ;;
@@ -39,11 +41,6 @@ for arg in "$@"; do
             ;;
     esac
 done
-
-if ! command -v awscurl >/dev/null 2>&1; then
-    echo "awscurl not installed. Run: pip install --user awscurl" >&2
-    exit 1
-fi
 
 if [ -z "$API_URL" ]; then
     base=$(aws cloudformation describe-stacks --stack-name moralpain-api \
@@ -56,6 +53,19 @@ if [ -z "$API_URL" ]; then
     fi
     API_URL="$base/v1"
 fi
+
+# Resolve AWS credentials once. We ask the AWS CLI for the effective
+# credentials so SSO profiles, env vars, and static keys all work.
+eval "$(aws configure export-credentials --format env 2>/dev/null)" || {
+    echo "Could not load AWS credentials via 'aws configure export-credentials'." >&2
+    echo "Make sure your session is active (e.g. 'aws sso login')." >&2
+    exit 1
+}
+if [ -z "${AWS_ACCESS_KEY_ID:-}" ] || [ -z "${AWS_SECRET_ACCESS_KEY:-}" ]; then
+    echo "AWS credentials not found after export. Aborting." >&2
+    exit 1
+fi
+REGION=$(aws configure get region 2>/dev/null || echo us-east-1)
 
 SUBMISSIONS_BUCKET="moralpain-submissions-26"
 TS=$(date +%s)
@@ -80,7 +90,7 @@ race_warning() {
     echo "        If they are, this assertion is unreliable."
 }
 
-# Assert HTTP status from an unsigned curl to $API_URL$path, method $1.
+# HTTP status of an unsigned request. Expects 403.
 assert_unsigned_rejected() {
     local method="$1" path="$2" body="${3:-}"
     local args=(-sS -o /dev/null -w '%{http_code}' -X "$method" "$API_URL$path")
@@ -96,29 +106,39 @@ assert_unsigned_rejected() {
     fi
 }
 
-# Assert HTTP 200 from a signed (awscurl) request.
-# Prints response body. Returns 0 only on success.
+# HTTP status and body of a signed (curl --aws-sigv4) request. Expects 200.
+# Sets $RESPONSE_BODY on success.
+RESPONSE_BODY=""
 assert_signed_ok() {
     local method="$1" path="$2" body="${3:-}"
-    local args=(-i -X "$method" --service execute-api)
+    local tmp
+    tmp=$(mktemp)
+    local args=(
+        -sS
+        --aws-sigv4 "aws:amz:$REGION:execute-api"
+        --user "$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY"
+        -o "$tmp"
+        -w '%{http_code}'
+        -X "$method"
+    )
+    if [ -n "${AWS_SESSION_TOKEN:-}" ]; then
+        args+=(-H "x-amz-security-token: $AWS_SESSION_TOKEN")
+    fi
     if [ -n "$body" ]; then
         args+=(-H 'Content-Type: application/json' -d "$body")
     fi
     args+=("$API_URL$path")
-    local response
-    if ! response=$(awscurl "${args[@]}" 2>&1); then
-        fail "signed $method $path -> awscurl failed"
-        echo "$response" | sed 's/^/    /'
-        return 1
-    fi
+
     local code
-    code=$(echo "$response" | head -1 | awk '{print $2}')
+    code=$(curl "${args[@]}")
+    RESPONSE_BODY=$(cat "$tmp")
+    rm -f "$tmp"
     if [ "$code" = "200" ]; then
         pass "signed $method $path -> 200"
         return 0
     else
         fail "signed $method $path -> $code"
-        echo "$response" | head -20 | sed 's/^/    /'
+        echo "$RESPONSE_BODY" | head -5 | sed 's/^/    /'
         return 1
     fi
 }
@@ -140,8 +160,7 @@ assert_unsigned_rejected POST /survey "$SURVEY_BODY"
 race_warning "surveys/"
 before=$(s3_count "$SUBMISSIONS_BUCKET" "surveys/")
 if assert_signed_ok POST /survey "$SURVEY_BODY"; then
-    # Give S3 a beat for eventual consistency.
-    sleep 2
+    sleep 2  # eventual-consistency buffer
     after=$(s3_count "$SUBMISSIONS_BUCKET" "surveys/")
     if [ "$after" = "$((before + 1))" ]; then
         pass "surveys/ object count $before -> $after (+1)"
