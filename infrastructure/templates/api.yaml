@@ -55,40 +55,6 @@ Resources:
           prefix: resiliency
       Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_submit_visited_resources_role
 
-  FetchSubmissionFieldFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${prefix}FetchSubmissionField
-      CodeUri: MoralPainFunctions
-      Handler: edu.uva.cs.moralpain.s3.SubmissionFieldFetcher::handleRequest
-      Runtime: java11
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      Environment:
-        Variables:
-          bucket: moralpain-submissions-26
-          prefix: surveys
-      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_fetch_submission_field_role
-      Timeout: 60
-
-  SubmitSubmissionFieldFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${prefix}SubmitSubmissionField
-      CodeUri: MoralPainFunctions
-      Handler: edu.uva.cs.moralpain.s3.SubmissionUpdater::handleRequest
-      Runtime: java11
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      Environment:
-        Variables:
-          bucket: moralpain-submissions-26
-          prefix: single
-          uploadFileName: submission.json
-      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/lambda_submit_submission_field_role
-
 Outputs:
   APIUri:
     Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com"
