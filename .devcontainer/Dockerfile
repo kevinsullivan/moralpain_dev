@@ -6,7 +6,7 @@ ARG YQ_VERSION=4.2.0
 ARG GH_VERSION=2.87.2
 ARG SAM_VERSION=1.133.0
 ARG OPENAPI_GENERATOR_VERSION=7.11.0
-ARG FLUTTER_VERSION=3.32.1
+ARG FLUTTER_VERSION=3.3.10
 
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
@@ -87,9 +87,11 @@ RUN ARCH=$(dpkg --print-architecture) && \
     rm -rf /tmp/gh.tar.gz /tmp/gh_${GH_VERSION}_linux_${GH_ARCH}
 
 # ----- Flutter SDK (system-wide) -----
-RUN git clone --depth 1 --branch ${FLUTTER_VERSION} https://github.com/flutter/flutter.git /opt/flutter && \
-    /opt/flutter/bin/flutter precache && \
-    /opt/flutter/bin/flutter config --no-analytics
+# NOTE: precache/config are deferred until after the USER switch to `dev` below.
+# Running them as root bakes absolute `/root/.pub-cache/...` paths into
+# /opt/flutter/packages/flutter_tools/.dart_tool/package_config.json, which then
+# become unreadable when flutter runs as `dev`.
+RUN git clone --depth 1 --branch ${FLUTTER_VERSION} https://github.com/flutter/flutter.git /opt/flutter
 ENV PATH="/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
 # ----- Create non-root user and workspace -----
@@ -109,6 +111,9 @@ USER dev
 WORKDIR /home/dev
 
 ENV PATH="/home/dev/.local/bin:/usr/local/bin:${PATH}"
+
+# ----- Flutter precache + config (as dev, so paths land under /home/dev) -----
+RUN flutter precache && flutter config --no-analytics
 
 # ----- openapi-generator-cli (user-local, pinned via OPENAPI_GENERATOR_VERSION env) -----
 RUN mkdir -p /home/dev/.local/bin && \

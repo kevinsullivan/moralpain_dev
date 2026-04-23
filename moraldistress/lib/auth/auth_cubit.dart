@@ -19,7 +19,9 @@ class AuthCubit extends Cubit<AuthState> {
       } else {
         emit(Unauthenticated());
       }
-    } catch (e) {
+    } catch (e, st) {
+      print('signIn failed: $e');
+      print(st);
       emit(Unauthenticated());
     }
   }

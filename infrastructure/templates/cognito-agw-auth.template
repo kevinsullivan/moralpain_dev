@@ -62,11 +62,11 @@ Resources:
       CallbackURLs:
         - 'myapp://'
         - 'https://nicholasphair.github.io/moralpain_dev/'
-        - 'http://localhost:3000/'
+        - 'http://localhost:47823/'
       LogoutURLs:
         - 'myapp://'
         - 'https://nicholasphair.github.io/moralpain_dev/'
-        - 'http://localhost:3000/'
+        - 'http://localhost:47823/'
 
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthFlows:

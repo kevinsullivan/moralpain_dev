@@ -29,8 +29,8 @@ const amplifyconfig = ''' {
               "OAuth": {
                 "WebDomain": "moralpain-user-pool-domain.auth.us-east-1.amazoncognito.com",
                 "AppClientId": "5p9k3kri6rnk46lguj5ff9fhtm",
-                "SignInRedirectURI": "myapp://,http://localhost:3000/,https://nicholasphair.github.io/moralpain_dev/",
-                "SignOutRedirectURI": "myapp://,http://localhost:3000/,https://nicholasphair.github.io/moralpain_dev/",
+                "SignInRedirectURI": "myapp://,http://localhost:47823/,https://nicholasphair.github.io/moralpain_dev/",
+                "SignOutRedirectURI": "myapp://,http://localhost:47823/,https://nicholasphair.github.io/moralpain_dev/",
                 "Scopes": [
                   "phone",
                 "email",
